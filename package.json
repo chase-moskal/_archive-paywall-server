@@ -1,0 +1,38 @@
+{
+	"name": "paywall-guardian",
+	"version": "0.0.0-dev.0",
+	"description": "",
+	"main": "dist/main.js",
+	"scripts": {
+		"build": "",
+		"test": "exit 0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/chase-moskal/paywall-guardian.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/chase-moskal/paywall-guardian/issues"
+	},
+	"homepage": "https://github.com/chase-moskal/paywall-guardian#readme",
+	"devDependencies": {
+		"@types/koa": "^2.0.51",
+		"@types/koa-mount": "^4.0.0",
+		"@types/node": "^12.11.1",
+		"mkdirp": "^0.5.1",
+		"npm-run-all": "^4.1.5",
+		"rimraf": "^3.0.0",
+		"typescript": "^3.6.4"
+	},
+	"dependencies": {
+		"@koa/cors": "^3.0.0",
+		"authoritarian": "0.0.0-dev.29",
+		"koa": "^2.10.0",
+		"koa-mount": "^4.0.0",
+		"koa-static": "^5.0.0",
+		"renraku": "0.0.0-dev.13"
+	}
+}
