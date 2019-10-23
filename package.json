@@ -4,7 +4,9 @@
 	"description": "",
 	"main": "dist/main.js",
 	"scripts": {
-		"build": "",
+		"prepare": "run-s clean build test",
+		"clean": "rimraf dist && mkdirp dist",
+		"build": "tsc",
 		"test": "exit 0"
 	},
 	"repository": {

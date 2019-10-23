@@ -1,26 +1,26 @@
 
 import {
 	AccessToken,
-	BraintreeToken,
 	PaywallGuardianTopic,
-} from "authoritarian/dist-cjs/interfaces.js"
+	ClaimsVanguardTopic,
+} from "authoritarian/dist-cjs/interfaces"
+
+import {verifyToken} from "authoritarian/dist-cjs/crypto"
 
 const mockAccessToken: AccessToken = "a123"
-const mockBraintreeToken: BraintreeToken = "b123"
 
-export function createPaywallGuardian(): PaywallGuardianTopic {
+export function createPaywallGuardian({publicKey, claimsVanguard}: {
+	publicKey: string
+	claimsVanguard: ClaimsVanguardTopic
+}): PaywallGuardianTopic {
+
 	return {
-
-		async getBraintreeToken(): Promise<BraintreeToken> {
-			return mockBraintreeToken
-		},
-
-		async grantUserPremium({accessToken, braintreeNonce}):
+		async grantUserPremium({accessToken, paypalToken}):
 		 Promise<AccessToken> {
 			return mockAccessToken
 		},
 
-		async revokeUserPremium({accessToken, braintreeNonce}):
+		async revokeUserPremium({accessToken, paypalToken}):
 		 Promise<AccessToken> {
 			return mockAccessToken
 		}
