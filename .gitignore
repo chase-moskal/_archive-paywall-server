@@ -1,6 +1,7 @@
 
+*.pem
+
 /dist*
-/*.pem
 /*.tgz
 /coverage
 /node_modules

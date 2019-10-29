@@ -1,12 +1,14 @@
 {
-	"name": "paywall-guardian",
-	"version": "0.0.0-dev.0",
+	"private": true,
+	"name": "paywall-server",
+	"version": "0.0.0-dev.1",
 	"description": "",
 	"main": "dist/main.js",
 	"scripts": {
 		"prepare": "run-s clean build test",
 		"clean": "rimraf dist && mkdirp dist",
 		"build": "tsc",
+		"start": "node dist/main.js",
 		"test": "exit 0"
 	},
 	"repository": {
@@ -23,7 +25,7 @@
 	"devDependencies": {
 		"@types/koa": "^2.0.51",
 		"@types/koa-mount": "^4.0.0",
-		"@types/node": "^12.11.1",
+		"@types/node": "^12.11.7",
 		"mkdirp": "^0.5.1",
 		"npm-run-all": "^4.1.5",
 		"rimraf": "^3.0.0",
@@ -31,10 +33,10 @@
 	},
 	"dependencies": {
 		"@koa/cors": "^3.0.0",
-		"authoritarian": "0.0.0-dev.29",
-		"koa": "^2.10.0",
+		"authoritarian": "0.0.0-dev.34",
+		"koa": "^2.11.0",
 		"koa-mount": "^4.0.0",
 		"koa-static": "^5.0.0",
-		"renraku": "0.0.0-dev.13"
+		"renraku": "0.0.0-dev.16"
 	}
 }

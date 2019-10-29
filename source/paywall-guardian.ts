@@ -9,8 +9,8 @@ import {verifyToken} from "authoritarian/dist-cjs/crypto"
 
 const mockAccessToken: AccessToken = "a123"
 
-export function createPaywallGuardian({publicKey, claimsVanguard}: {
-	publicKey: string
+export function createPaywallGuardian({authServerPublicKey, claimsVanguard}: {
+	authServerPublicKey: string
 	claimsVanguard: ClaimsVanguardTopic
 }): PaywallGuardianTopic {
 

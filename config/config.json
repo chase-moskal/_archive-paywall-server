@@ -1,0 +1,4 @@
+{
+	"port": 8005,
+	"authServerPublicKey": "config/auth-server.public.pem"
+}
