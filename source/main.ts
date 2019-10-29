@@ -63,7 +63,7 @@ export async function main() {
 				console.debug("🔔 webhook", request.path, request.body)
 				response.type = "application/json"
 				response.body = JSON.stringify(
-					paywallWebhook.webhook(request.body)
+					await paywallWebhook.webhook(request.body)
 				)
 				return next()
 			}
