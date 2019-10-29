@@ -1,7 +1,6 @@
 
 import * as Koa from "koa"
 import * as koaCors from "@koa/cors"
-import * as koaMount from "koa-mount"
 import * as koaBodyParser from "koa-bodyparser"
 import {createApiServer} from "renraku/dist-cjs/server/create-api-server"
 
@@ -10,6 +9,7 @@ const read = (path: string) => fsPromises.readFile(path, "utf8")
 
 import {Config, Api} from "./interfaces"
 import {mockClaimsVanguard} from "./mocks"
+import {endpoint} from "./toolbox/endpoint"
 import {createPaywallWebhook} from "./paywall-webhook"
 import {createPaywallGuardian} from "./paywall-guardian"
 import {createMongoCollection} from "./toolbox/create-mongo-collection"
@@ -22,7 +22,6 @@ export async function main() {
 	// configuration
 	//
 
-	const config: Config = JSON.parse(await read("config/config.json"))
 	const {
 		debug,
 		apiPort,
@@ -30,24 +29,20 @@ export async function main() {
 		paypalWebhookUrl,
 		paymentsDatabase,
 		authServerPublicKey: keyPath
-	} = config
+	}: Config = JSON.parse(await read("config/config.json"))
 
 	//
 	// initialization
 	//
 
 	const authServerPublicKey = await read(keyPath)
-
 	const paymentsCollection = await createMongoCollection(paymentsDatabase)
-
 	const claimsVanguard = mockClaimsVanguard
-
 	const paywallGuardian = createPaywallGuardian({
 		claimsVanguard,
 		paymentsCollection,
 		authServerPublicKey,
 	})
-
 	const paywallWebhook = await createPaywallWebhook({
 		claimsVanguard,
 		paypalWebhookUrl,
@@ -55,7 +50,8 @@ export async function main() {
 	})
 
 	//
-	// paypal webhook endpoint
+	// endpoint: webhook
+	// receives updates from paypal
 	//
 
 	const webhookKoa = new Koa()
@@ -77,7 +73,7 @@ export async function main() {
 		})
 
 	//
-	// json rpc api
+	// endpoint: json rpc api
 	//
 
 	const {koa: apiKoa} = createApiServer<Api>({
@@ -98,13 +94,9 @@ export async function main() {
 	// run server
 	//
 
-	const mount = (koa: Koa, path: string, port: number) => new Koa()
-		.use(koaMount(path, koa))
-		.listen(port)
-
-	mount(apiKoa, "/api", apiPort)
+	endpoint("/api", apiKoa, apiPort)
 	console.log(`🌐 ${apiPort} paywall api`)
 
-	mount(webhookKoa, "/webhook", webhookPort)
+	endpoint("/webhook", webhookKoa, webhookPort)
 	console.log(`🌐 ${webhookPort} paywall webhook`)
 }
