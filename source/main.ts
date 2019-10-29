@@ -1,15 +1,18 @@
 
 import * as Koa from "koa"
-import * as mount from "koa-mount"
+import * as koaCors from "@koa/cors"
+import * as koaMount from "koa-mount"
+import * as koaBodyParser from "koa-bodyparser"
+import {createApiServer} from "renraku/dist-cjs/server/create-api-server"
 
 import {promises as fsPromises} from "fs"
 const read = (path: string) => fsPromises.readFile(path, "utf8")
 
-import {ClaimsVanguardTopic} from "authoritarian/dist-cjs/interfaces"
-import {createApiServer} from "renraku/dist-cjs/server/create-api-server"
-
 import {Config, Api} from "./interfaces"
+import {mockClaimsVanguard} from "./mocks"
+import {createPaywallWebhook} from "./paywall-webhook"
 import {createPaywallGuardian} from "./paywall-guardian"
+import {createMongoCollection} from "./toolbox/create-mongo-collection"
 
 main().catch(error => console.error(error))
 
@@ -20,49 +23,65 @@ export async function main() {
 	//
 
 	const config: Config = JSON.parse(await read("config/config.json"))
-	const {port, authServerPublicKey: keyPath} = config
+	const {
+		debug,
+		apiPort,
+		webhookPort,
+		paypalWebhookUrl,
+		paymentsDatabase,
+		authServerPublicKey: keyPath
+	} = config
+
+	//
+	// initialization
+	//
+
 	const authServerPublicKey = await read(keyPath)
 
-	//
-	// business logic objects
-	//
+	const paymentsCollection = await createMongoCollection(paymentsDatabase)
 
-	// mock vanguard
-	const claimsVanguard: ClaimsVanguardTopic = {
-		async createUser(o) {
-			return {
-				userId: "u123",
-				public: {claims: {}},
-				private: {claims: {}
-			}
-		}},
-		async getUser(o) {
-			return {
-				userId: "u123",
-				public: {claims: {}},
-				private: {claims: {}
-			}
-		}},
-		async setClaims(o) {
-			return {
-				userId: "u123",
-				public: {claims: {}},
-				private: {claims: {}
-			}
-		}},
-	}
+	const claimsVanguard = mockClaimsVanguard
 
 	const paywallGuardian = createPaywallGuardian({
-		authServerPublicKey,
 		claimsVanguard,
+		paymentsCollection,
+		authServerPublicKey,
 	})
+
+	const paywallWebhook = await createPaywallWebhook({
+		claimsVanguard,
+		paypalWebhookUrl,
+		paymentsCollection,
+	})
+
+	//
+	// paypal webhook endpoint
+	//
+
+	const webhookKoa = new Koa()
+		.use(koaCors())
+		.use(koaBodyParser())
+		.use(async(context, next) => {
+			try {
+				const {request, response} = context
+				console.debug("🔔 webhook", request.path, request.body)
+				response.type = "application/json"
+				response.body = JSON.stringify(
+					paywallWebhook.webhook(request.body)
+				)
+				return next()
+			}
+			catch (error) {
+				context.throw(500, debug ? error.message : "error")
+			}
+		})
 
 	//
 	// json rpc api
 	//
 
 	const {koa: apiKoa} = createApiServer<Api>({
-		debug: true,
+		debug,
 		logger: console,
 		topics: {
 			paywallGuardian: {
@@ -79,8 +98,13 @@ export async function main() {
 	// run server
 	//
 
-	const koa = new Koa()
-	koa.use(mount("/api", apiKoa))
-	koa.listen(port)
-	console.log(`Paywall guardian server listening on port ${port}`)
+	const mount = (koa: Koa, path: string, port: number) => new Koa()
+		.use(koaMount(path, koa))
+		.listen(port)
+
+	mount(apiKoa, "/api", apiPort)
+	console.log(`🌐 ${apiPort} paywall api`)
+
+	mount(webhookKoa, "/webhook", webhookPort)
+	console.log(`🌐 ${webhookPort} paywall webhook`)
 }

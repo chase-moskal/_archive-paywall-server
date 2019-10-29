@@ -1,4 +1,12 @@
 {
-	"port": 8005,
-	"authServerPublicKey": "config/auth-server.public.pem"
+	"debug": true,
+	"apiPort": 8005,
+	"webhookPort": 8080,
+	"authServerPublicKey": "config/auth-server.public.pem",
+	"paypalWebhookUrl": "https://paywall.chasemoskal.com:8005/webhooks",
+	"paymentsDatabase": {
+		"uri": "mongodb+srv://admin:admin@devcluster-g4uwh.mongodb.net/test?retryWrites=true&w=majority",
+		"dbName": "paywall",
+		"collectionName": "payments"
+	}
 }

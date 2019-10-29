@@ -24,7 +24,9 @@
 	"homepage": "https://github.com/chase-moskal/paywall-guardian#readme",
 	"devDependencies": {
 		"@types/koa": "^2.0.51",
+		"@types/koa-bodyparser": "^4.3.0",
 		"@types/koa-mount": "^4.0.0",
+		"@types/koa__cors": "^2.2.3",
 		"@types/node": "^12.11.7",
 		"mkdirp": "^0.5.1",
 		"npm-run-all": "^4.1.5",
@@ -33,10 +35,13 @@
 	},
 	"dependencies": {
 		"@koa/cors": "^3.0.0",
+		"@types/mongodb": "^3.3.6",
 		"authoritarian": "0.0.0-dev.34",
 		"koa": "^2.11.0",
+		"koa-bodyparser": "^4.2.1",
 		"koa-mount": "^4.0.0",
 		"koa-static": "^5.0.0",
+		"mongodb": "^3.3.3",
 		"renraku": "0.0.0-dev.16"
 	}
 }
