@@ -1,6 +1,7 @@
 
-# using paywall-server
+# paywall-server: [authoritarian](https://github.com/chase-moskal/authoritarian-client) microservice
 
+## hypothetical paywall-server usage
 &nbsp;&nbsp; *concept usage instructions for paywall-server*
 
 1. prerequisites
@@ -18,6 +19,8 @@
 			- now the auth-server will allow paywall-server to change user claims
 1. use `<paywall-panel>` authoritarian-client in your ui
 	- configure authoritarian to point at your `paywall-server` url
+
+<br/><br/>
 
 ------
 
